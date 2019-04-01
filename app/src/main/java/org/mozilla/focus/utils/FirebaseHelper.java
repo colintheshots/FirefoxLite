@@ -43,6 +43,9 @@ final public class FirebaseHelper extends FirebaseWrapper {
 
     private static final String TAG = "FirebaseHelper";
 
+    // keys for user properties
+    public static final String USER_PROPERTY_TRACKER = "tracker";
+
     // keys for remote config default value
     public static final String RATE_APP_DIALOG_TEXT_TITLE = "rate_app_dialog_text_title";
     public static final String RATE_APP_DIALOG_TEXT_CONTENT = "rate_app_dialog_text_content";
@@ -343,5 +346,13 @@ final public class FirebaseHelper extends FirebaseWrapper {
 
     public static void onLocaleUpdate(Context context) {
         getInstance().refreshRemoteConfigDefault(context, null);
+    }
+
+    public static void setUserProperty(Context context, String tag, String value) {
+        final FirebaseWrapper instance = getInstance();
+        if (instance == null || context == null) {
+            return;
+        }
+        instance.setFirebaseUserProperty(context, tag, value);
     }
 }

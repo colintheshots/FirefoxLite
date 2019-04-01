@@ -25,7 +25,9 @@ import org.mozilla.focus.telemetry.TelemetryWrapper.FIND_IN_PAGE.CLICK_PREVIOUS
 import org.mozilla.focus.telemetry.TelemetryWrapper.FIND_IN_PAGE.OPEN_BY_MENU
 import org.mozilla.focus.telemetry.TelemetryWrapper.Value.SETTINGS
 import org.mozilla.focus.utils.AdjustHelper
+import org.mozilla.focus.utils.AppConstants
 import org.mozilla.focus.utils.Browsers
+import org.mozilla.focus.utils.FirebaseHelper
 import org.mozilla.focus.utils.Settings
 import org.mozilla.rocket.theme.ThemeManager
 import org.mozilla.telemetry.Telemetry
@@ -275,6 +277,7 @@ object TelemetryWrapper {
 
             updateDefaultBrowserStatus(context)
 
+            val trackerTokenPrefKey = resources.getString(R.string.pref_key_s_tracker_token)
             val configuration = TelemetryConfiguration(context)
                     .setServerEndpoint("https://incoming.telemetry.mozilla.org")
                     .setAppName(TELEMETRY_APP_NAME_ZERDA)
@@ -287,11 +290,17 @@ object TelemetryWrapper {
                             resources.getString(R.string.pref_key_storage_save_downloads_to),
                             resources.getString(R.string.pref_key_webview_version),
                             resources.getString(R.string.pref_s_news),
-                            resources.getString(R.string.pref_key_locale))
+                            resources.getString(R.string.pref_key_locale),
+                            trackerTokenPrefKey
+                    )
                     .setSettingsProvider(CustomSettingsProvider())
                     .setCollectionEnabled(telemetryEnabled)
                     .setUploadEnabled(true) // the default value for UploadEnabled is true, but we want to make it clear.
 
+            if (BuildConfig.DEBUG || AppConstants.isBetaBuild()) {
+                val trackerToken = PreferenceManager.getDefaultSharedPreferences(context).getString(trackerTokenPrefKey, "")
+                FirebaseHelper.setUserProperty(context, FirebaseHelper.USER_PROPERTY_TRACKER, trackerToken)
+            }
             val serializer = JSONPingSerializer()
             val storage = FileTelemetryStorage(configuration, serializer)
             val client = HttpURLConnectionTelemetryClient()

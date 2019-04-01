@@ -73,6 +73,10 @@ abstract class FirebaseWrapper {
     private static long remoteConfigCacheExpirationInSeconds = DEFAULT_CACHE_EXPIRATION_IN_SECONDS;
     private static boolean developerModeEnabled;
 
+    void setFirebaseUserProperty(Context context, String tag, String value) {
+        FirebaseAnalytics.getInstance(context).setUserProperty(tag, value);
+    }
+
     public interface RemoteConfigFetchCallback {
         void onFetched();
     }

@@ -117,4 +117,7 @@ abstract class FirebaseWrapper {
 
     public static void event(Context context, String key, Bundle param) {
     }
+
+    void setFirebaseUserProperty(Context context, String tag, String value) {
+    }
 }
